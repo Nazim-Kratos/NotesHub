@@ -1,11 +1,11 @@
-
-import React, { useState } from 'react'
-
+import React, { useState,useEffect } from 'react'
 const App = () => {
   const [Note, setNote] = useState('')
   const [Note1, setNote1] = useState('')
-  const [Notes, setNotes] = useState([]);
-
+  const [Notes, setNotes] = useState(()=>{
+    const data=localStorage.getItem('Notes')
+    return data ? JSON.parse(data):[];
+  })
   const HandleSubmit = (e) => {
     e.preventDefault();
     if (!Note.trim() || !Note1.trim()) return 0;
@@ -17,11 +17,20 @@ const App = () => {
       isCompleted: false
     }
 
-    setNotes([...Notes, newNote]);
+    setNotes([...Notes,newNote]);
     setNote('')
     setNote1('')
   }
-
+  useEffect(() => {
+   localStorage.setItem('Notes',JSON.stringify(Notes))
+  }, [Notes])
+  useEffect(() => {
+    const data = localStorage.getItem('Notes')
+    const result=JSON.parse(data);
+    setNotes(result)
+   
+  }, [])
+  
   const HandleDelete = (id) => {
     const NewNotes = Notes.filter((note => {
       return note.id !== id;
